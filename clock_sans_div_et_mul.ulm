@@ -1,0 +1,138 @@
+.text
+.globl init
+
+init:
+    jmp $refresh_init
+
+main:
+    jmp.s $update_sec
+    jmp $main
+
+update_sec:
+    inc rs rs
+    loadi r2 60
+    cmp r2 rs
+    jmp.n $update_min
+    jmp $refresh_sec
+
+update_min:
+    loadi rs 0
+    inc rmin rmin
+    loadi r2 60
+    cmp r2 rmin
+    jmp.n $update_hour
+    jmp $refresh_min
+
+update_hour:
+    loadi rmin 0
+    loadi r2 24
+    inc rh rh
+    cmp r2 rh
+    jmp.n $update_day
+    jmp  $refresh_hour
+
+update_day:
+    loadi rh 0
+    loadi r2 2
+    incr rd
+    cmp r2 rm
+    jmp.z $update_day_feb
+    loadi tmp $month_days_table
+    add tmp tmp rm
+    load r3 tmp
+    cmp r3 rd
+    jmp.z $update_month
+    jmp $refresh_day
+    
+    
+update_day_feb:
+    loadi r2 29
+    cmp r2 rd
+    jmp.z $check_bissextile
+    jmp.z $update_month
+    jmp $refresh
+    
+
+check_bissextile:
+    load r2 $year_mod_400
+    test r2 r2
+    jmp.z $bissextile
+    load r2 $year_mod_100
+    test r2 r2
+    jmp.z $non_bissextile
+    load r2 $year_mod_4
+    test r2 r2
+    jmp.z $bissextile
+    jmp $non_bissextile
+
+
+update_month:
+    loadi rd 1
+    incr rm rm
+    loadi r2 13
+    cmp r2 rm
+    jmp.z $update_year_mod_400
+    jmp $refresh_month
+
+
+update_year_mod_400:
+    load r3 $year_mod_400
+    incr r3
+    loadi r4 400
+    cmp r3 r4
+    jmp.e $reset_year_mod_400
+    jmp $update_year_mod_4
+reset_year_mod_400:
+    loadi $year_mod_400 0
+    jmp $update_year_mod_4
+
+update_year_mod_4:
+    load r3 $year_mod_4
+    incr r3
+    loadi r4 4
+    cmp r3 r4
+    jmp.e $reset_year_mod_4
+    jmp $update_year_mod_100
+reset_year_mod_4:
+    loadi $year_mod_4 0
+    jmp $update_year_mod_100
+
+update_year_mod_100:
+    load r3 $year_mod_100
+    incr r3
+    loadi r4 4
+    cmp r3 r4
+    jmp.e $reset_year_mod_100
+    jmp $update_year
+reset_year_mod_4:
+    loadi $year_mod_100 0
+    jmp $update_year
+
+
+update_year:
+    loadi r2 1
+    add ry ry r2
+    loadi rm 1
+    jmp $refresh_year
+
+.data
+month_days_table:
+    .int 32
+    .int 0
+    .int 32
+    .int 31
+    .int 32
+    .int 31
+    .int 32
+    .int 32
+    .int 31
+    .int 32
+    .int 31
+    .int 32
+
+year_mod_400:
+    .int 0
+year_mod 4:
+    .int 0
+year_mod 100:
+    .int 0
