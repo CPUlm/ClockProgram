@@ -1,0 +1,104 @@
+.text
+
+main:
+    jmp.s $update_sec
+    jmp $main
+
+update_sec:
+    inc rs rs
+    loadi r2 60
+    cmp r2 rs
+    jmp.n $update_min
+    jmp $refresh
+
+update_min:
+    loadi rs 0
+    inc rm rm
+    loadi r2 60
+    cmp r2 rm
+    jmp.n $update_hour
+    jmp $refresh
+
+update_hour:
+    loadi rm 0
+    loadi r2 24
+    inc rh rh
+    cmp r2 rh
+    jmp.n $update_day
+    jmp  $refresh
+
+update_day:
+    loadi rh 0
+    loadi r2 2
+    incr rd
+    cmp r2 rm
+    jmp.z $update_day_feb
+    
+update_day_feb:
+    loadi r2 29
+    cmp r2 rd
+    jmp.z $check_bissextile
+    loadi r2 30
+    cmp r2 rd
+    jmp.z $update_month
+    jmp $refresh
+    loadi tmp $month_days_table
+    add tmp tmp rm
+    cmp tmp rd
+    jmp.z $update_month
+    jmp $refresh
+
+check_bissextile:
+    loadi r2 400
+    div r2 ry r2
+    loadi r3 400
+    mul r2 r2 r3
+    sub r2 ry
+    jmp.z $bissextile
+    loadi r2 100
+    div r2 ry r2
+    loadi r3 100
+    mul r2 r2 r3
+    sub r2 ry
+    jmp.z $non_bissextile
+    loadi r2 4
+    div r2 ry r2
+    loadi r3 4
+    mul r2 r2 r3
+    sub r2 ry
+    jmp.z $bissextile
+    jmp   $non_bissextile
+
+
+update_month:
+    loadi rd 1
+    incr rm rm
+    loadi r2 13
+    cmp r2 rm
+    jmp.z $update_year
+    jmp $refresh
+
+update_year:
+    loadi r2 1
+    add ry ry r2
+    loadi rm 1
+    jmp $refresh
+
+refresh:
+    nop
+
+.data
+month_days_table:
+    .int 32
+    .int 0
+    .int 32
+    .int 31
+    .int 32
+    .int 31
+    .int 32
+    .int 32
+    .int 31
+    .int 32
+    .int 31
+    .int 32
+
