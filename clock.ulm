@@ -1,12 +1,11 @@
 .text
-.globl init
-
-init:
-    jmp $refresh_init
 
 main:
+    jmp $refresh_init
+
+loop:
     jmp.s $update_sec
-    jmp $main
+    jmp $loog
 
 update_sec:
     inc rs rs

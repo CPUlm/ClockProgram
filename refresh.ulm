@@ -17,7 +17,7 @@ refresh_init:
     mov 5 $colon
     mov 22 $colon
     mov 25 $colon
-    jmp $main
+    jmp $loop
 
 refresh_year:
     mov r21 26 ; adresse a changer
@@ -60,7 +60,7 @@ refresh_sec:
     call print_string
     mov r20 rs
     call print_int
-    jmp $main
+    jmp $loop
 
 
 
