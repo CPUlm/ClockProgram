@@ -1,6 +1,8 @@
 .text
+.globl init
 
-
+init:
+    jmp $refresh_init
 
 main:
     jmp.s $update_sec
