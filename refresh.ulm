@@ -1,0 +1,57 @@
+; les adresses de l'ecran sont mal indexees
+; pour l'instant l'affichage est le suivant :
+;hh:mm:ss
+;jj:mm:aaaa (la ligne recommence à 20 : à changer)
+
+print_nb:
+; affiche le nombre stoqué dans r20 à l'adresse stoquée dans r21 (et les cases suivantes) 
+    ret
+
+print_string:
+; affiche la chaine stoquee à l'adresse r20 dans la case r21 (et les suivantes)
+    ret
+
+
+refresh_init:
+    mov 2 $colon
+    mov 5 $colon
+    mov 22 $colon
+    mov 25 $colon
+    jmp $main
+
+refresh_year:
+    mov r20 ry
+    mov r21 26 ; adresse a changer
+    call print_int
+
+refresh_month:
+    mov r20 rm
+    mov r21 23 ; adresse a changer
+    call print_int
+
+refresh_day:
+    mov r20 rd
+    mov r21 20 ; adresse a changer
+    call print_int
+
+refresh_hour:
+    mov r20 rh
+    mov r21 0 ; adresse a changer
+    call print_int
+
+refresh_min:
+    mov r20 rm
+    mov r21 3 ; adresse a changer
+    call print_int
+
+refresh_sec:
+    mov r20 rs
+    mov r21 6 ; adresse a changer
+    call print_int
+    jmp $main
+
+
+
+.data
+colon:
+    .string ":"
