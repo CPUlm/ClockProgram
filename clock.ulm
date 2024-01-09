@@ -1,5 +1,7 @@
 .text
 
+
+
 main:
     jmp.s $update_sec
     jmp $main
@@ -9,23 +11,23 @@ update_sec:
     loadi r2 60
     cmp r2 rs
     jmp.n $update_min
-    jmp $refresh
+    jmp $refresh_sec
 
 update_min:
     loadi rs 0
-    inc rm rm
+    inc rmin rmin
     loadi r2 60
-    cmp r2 rm
+    cmp r2 rmin
     jmp.n $update_hour
-    jmp $refresh
+    jmp $refresh_min
 
 update_hour:
-    loadi rm 0
+    loadi rmin 0
     loadi r2 24
     inc rh rh
     cmp r2 rh
     jmp.n $update_day
-    jmp  $refresh
+    jmp  $refresh_hour
 
 update_day:
     loadi rh 0
@@ -33,20 +35,20 @@ update_day:
     incr rd
     cmp r2 rm
     jmp.z $update_day_feb
+    loadi tmp $month_days_table
+    add tmp tmp rm
+    cmp tmp rd
+    jmp.z $update_month
+    jmp $refresh_day
+    
     
 update_day_feb:
     loadi r2 29
     cmp r2 rd
     jmp.z $check_bissextile
-    loadi r2 30
-    cmp r2 rd
     jmp.z $update_month
     jmp $refresh
-    loadi tmp $month_days_table
-    add tmp tmp rm
-    cmp tmp rd
-    jmp.z $update_month
-    jmp $refresh
+    
 
 check_bissextile:
     loadi r2 400
@@ -76,16 +78,13 @@ update_month:
     loadi r2 13
     cmp r2 rm
     jmp.z $update_year
-    jmp $refresh
+    jmp $refresh_month
 
 update_year:
     loadi r2 1
     add ry ry r2
     loadi rm 1
-    jmp $refresh
-
-refresh:
-    nop
+    jmp $refresh_year
 
 .data
 month_days_table:
