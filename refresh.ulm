@@ -20,38 +20,51 @@ refresh_init:
     jmp $main
 
 refresh_year:
-    mov r20 ry
     mov r21 26 ; adresse a changer
+    mov r20 $4_blanks
+    call print_string
+    mov r20 ry
     call print_int
 
 refresh_month:
-    mov r20 rm
     mov r21 23 ; adresse a changer
+    mov r20 $2_blanks
+    call print_string
+    mov r20 rm
     call print_int
 
 refresh_day:
-    mov r20 rd
     mov r21 20 ; adresse a changer
+    mov r20 $2_blanks
+    call print_string
+    mov r20 rd
     call print_int
 
 refresh_hour:
-    mov r20 rh
     mov r21 0 ; adresse a changer
+    mov r20 $2_blanks
+    call print_string
+    mov r20 rh
     call print_int
 
 refresh_min:
-    mov r20 rm
     mov r21 3 ; adresse a changer
+    mov r20 $2_blanks
+    call print_string
+    mov r20 rm
     call print_int
 
 refresh_sec:
-    mov r20 rs
     mov r21 6 ; adresse a changer
+    mov r20 $2_blanks
+    call print_string
+    mov r20 rs
     call print_int
     jmp $main
 
 
 
 .data
-colon:
-    .string ":"
+colon: .string ":"
+2_blanks .zstring "  "
+4_blanks .zstring "    "
